@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
+h2 { color: #2c7be5; }
+label { display: block; margin-top: 10px; }
+button { margin-top: 15px; padding: 10px; }
+</style>
+</head>
+<body>
+<h2>ข้อมูลผู้ใช้งาน</h2>
+<label>ชื่อ <input id="name"></label>
+<label>เพศ
+<select id="gender">
+<option value="ชาย">ชาย</option>
+<option value="หญิง">หญิง</option>
+</select>
+</label>
+<label>อายุ <input id="age" type="number"></label>
+<label>น้ำหนัก (kg) <input id="weight" type="number"></label>
+<button onclick="saveProfile()">บันทึกข้อมูล</button>
+
+
+<hr>
+
+
+<h2>บันทึกกิจกรรม</h2>
+<label>กิจกรรม
+<select id="activity">
+<option value="เดินเร็ว">เดินเร็ว</option>
+<option value="วิ่ง">วิ่ง</option>
+<option value="เวทเทรนนิ่ง">เวทเทรนนิ่ง</option>
+</select>
+</label>
+<label>เวลา (นาที) <input id="minutes" type="number"></label>
+<button onclick="calcAndSave()">คำนวณและบันทึก</button>
+
+
+<p id="result"></p>
+
+
+<script>
+function saveProfile() {
+const data = {
+name: name.value,
+gender: gender.value,
+age: age.value,
+weight: weight.value
+};
+google.script.run.saveUserProfile(data);
+alert('บันทึกข้อมูลผู้ใช้แล้ว');
+}
+
+
+function calcAndSave() {
+const weight = parseFloat(document.getElementById('weight').value);
+const minutes = parseFloat(document.getElementById('minutes').value);
+const activity = document.getElementById('activity').value;
+
+
+// MET values (ประมาณ)
+let MET = 0;
+if (activity === 'เดินเร็ว') MET = 5;
+if (activity === 'วิ่ง') MET = 8;
+if (activity === 'เวทเทรนนิ่ง') MET = 6;
+
+
+const calories = MET * weight * (minutes / 60);
+document.getElementById('result').innerText = `เผาผลาญประมาณ ${calories.toFixed(2)} kcal`;
+
+
+const data = {
+name: document.getElementById('name').value,
+activity: activity,
+minutes: minutes,
+calories: calories.toFixed(2)
+};
+google.script.run.saveActivity(data);
+}
+</script>
+</body>
+</html>
